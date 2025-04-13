@@ -11,7 +11,8 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 
 type RootStackParamList = {
   Login: undefined;
-  Cadastrar: undefined;
+  Cadastro: undefined;
+  EsqueciSenha: undefined;
 };
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Login'>;
@@ -38,12 +39,14 @@ const LoginScreen = ({ navigation }: Props) => {
       <View style={styles.formArea}>
 
         <StyledEmailInput
+          label="E-mail"
           placeholder="Insira seu e-mail"
           value={username}
           onChangeText={setUsername}
         />
 
         <StyledPasswordInput
+          label="Senha"
           placeholder="Insira sua senha"
           value={password}
           onChangeText={setPassword}
@@ -51,14 +54,17 @@ const LoginScreen = ({ navigation }: Props) => {
 
         {/* Links para telas */}
         <View style={styles.linkRow}>
-          <TouchableOpacity style={styles.linkWithIcon}>
+
+          <TouchableOpacity style={styles.linkWithIcon} onPress={() => navigation.navigate('EsqueciSenha')}>
             <Text style={styles.linkText}>esqueci minha senha</Text>
             <Icon name="long-arrow-right" size={width * 0.035} color="#f4c100" style={styles.arrow} />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.cadastrarContainer} onPress={() => navigation.navigate('Cadastrar')}          >
+
+          <TouchableOpacity style={styles.cadastrarContainer} onPress={() => navigation.navigate('Cadastro')}          >
             <Text style={styles.cadastrarTexto}>cadastrar</Text>
             <View style={styles.cadastrarLinha} />
           </TouchableOpacity>
+
         </View>
 
         {/* Botão Continuar => verifica os inputs e depois passará para o home */}
