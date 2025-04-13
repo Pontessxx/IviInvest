@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
 import StyledEmailInput from '../components/StyledEmailInput';
+
 // @ts-ignore
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 const { width, height } = Dimensions.get('window');
 
-export default function ForgotPasswordScreen() {
+const ForgotPasswordScreen =() =>{
   const [email, setEmail] = useState('');
 
   const handleSendToken = () => {
@@ -84,3 +85,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: width * 0.05,
   },  
 });
+
+export default ForgotPasswordScreen;

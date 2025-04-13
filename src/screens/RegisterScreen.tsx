@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-nati
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import StyledEmailInput from '../components/StyledEmailInput';
 import StyledPasswordInput from '../components/StyledPasswordInput';
+import YellowButton from '../components/YellowButton';
 
 type RootStackParamList = {
   Login: undefined;
@@ -49,9 +50,7 @@ export default function RegisterScreen({ navigation }: Props) {
         />
       </View>
   
-      <TouchableOpacity style={styles.button}>
-        <Text style={styles.buttonText}>Cadastrar</Text>
-      </TouchableOpacity>
+      <YellowButton title="Cadastrar" onPress={() => console.log('BTN - CADASTRAR')} />
     </View>
   );
 }
@@ -79,18 +78,6 @@ const styles = StyleSheet.create({
     marginTop: height * 0.04,
   },
 
-  button: {
-    backgroundColor: '#FFCD00',
-    paddingVertical: height * 0.02,
-    borderRadius: 10,
-    alignItems: 'center',
-  },
-
-  buttonText: {
-    color: '#000',
-    fontWeight: 'bold',
-    fontSize: width * 0.045,
-  },
   description: {
     textAlign: 'center',
     fontSize: width * 0.035,

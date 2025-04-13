@@ -5,7 +5,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Dimensions 
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import StyledEmailInput from '../components/StyledEmailInput';
 import StyledPasswordInput from '../components/StyledPasswordInput';
-
+import YellowButton from '../components/YellowButton';
 // @ts-ignore
 import Icon from 'react-native-vector-icons/FontAwesome';
 
@@ -67,10 +67,7 @@ const LoginScreen = ({ navigation }: Props) => {
 
         </View>
 
-        {/* Botão Continuar => verifica os inputs e depois passará para o home */}
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>Entrar</Text>
-        </TouchableOpacity>
+        <YellowButton title="Entrar" onPress={() => console.log('BTN - LOGIN')} />
       </View>
     </View>
   );
