@@ -1,6 +1,11 @@
 // src/screens/LoginScreen.tsx
 import React, { useState } from 'react';
+import { Dimensions } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+
+// responsividade, pega a width e a altura do dispositivo
+const { width, height } = Dimensions.get('window');
 
 export default function LoginScreen() {
   //variavel para verificar se o input de senha está visível ou não
@@ -33,7 +38,7 @@ export default function LoginScreen() {
             placeholderTextColor="#333"
           />
           <TouchableOpacity onPress={() => setSecure(!secure)}>
-            <Text style={styles.olho}>👁️</Text>
+            <Icon name={secure ? 'eye-slash' : 'eye'} size={width * 0.05} color="#333" />
           </TouchableOpacity>
         </View>
 
@@ -56,14 +61,29 @@ export default function LoginScreen() {
   );
 }
 
+
+//Estilos da tela de login
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#000' },
-  logoArea: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  logo: { width: 120, height: 120 },
+  container: {
+    flex: 1,
+    backgroundColor: '#000',
+  },
+
+  logoArea: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  logo: {
+    width: width * 0.25,
+    height: width * 0.25,
+  },
 
   formArea: {
     backgroundColor: '#f5f5f5',
-    padding: 24,
+    paddingHorizontal: width * 0.06,
+    paddingVertical: height * 0.04,
     borderTopWidth: 2,
     borderColor: '#f4c100',
   },
@@ -71,9 +91,11 @@ const styles = StyleSheet.create({
   input: {
     backgroundColor: '#ddd',
     color: '#333',
-    padding: 12,
+    paddingVertical: height * 0.015,
+    paddingHorizontal: width * 0.04,
     borderRadius: 8,
-    marginBottom: 16,
+    fontSize: width * 0.04,
+    marginBottom: height * 0.02,
   },
 
   passwordContainer: {
@@ -81,39 +103,41 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#ddd',
     borderRadius: 8,
-    paddingHorizontal: 12,
-    marginBottom: 16,
+    paddingHorizontal: width * 0.04,
+    marginBottom: height * 0.02,
   },
 
   passwordInput: {
     flex: 1,
-    paddingVertical: 12,
+    paddingVertical: height * 0.015,
+    color: '#000',
+    fontSize: width * 0.04,
   },
 
-  olho: {
-    fontSize: 16,
-    color: '#333',
+  eye: {
     padding: 4,
   },
 
   linkRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 16,
+    marginBottom: height * 0.025,
   },
 
   linkText: {
     color: '#000',
+    fontSize: width * 0.035,
   },
 
   linkTextBold: {
     color: '#f4c100',
     fontWeight: 'bold',
+    fontSize: width * 0.035,
   },
 
   button: {
     backgroundColor: '#f4c100',
-    padding: 16,
+    paddingVertical: height * 0.02,
     borderRadius: 10,
     alignItems: 'center',
   },
@@ -121,6 +145,6 @@ const styles = StyleSheet.create({
   buttonText: {
     color: '#000',
     fontWeight: 'bold',
-    fontSize: 16,
+    fontSize: width * 0.045,
   },
 });
