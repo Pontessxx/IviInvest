@@ -1,13 +1,25 @@
 // src/screens/LoginScreen.tsx
 import React, { useState } from 'react';
-import { Dimensions } from 'react-native';
+
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Dimensions } from 'react-native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import StyledEmailInput from '../components/StyledEmailInput';
+import StyledPasswordInput from '../components/StyledPasswordInput';
+
+// @ts-ignore
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+
+type RootStackParamList = {
+  Login: undefined;
+  Cadastrar: undefined;
+};
+
+type Props = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
 // responsividade, pega a width e a altura do dispositivo
 const { width, height } = Dimensions.get('window');
 
-export default function LoginScreen() {
+const LoginScreen = ({ navigation }: Props) => {
   //variavel para verificar se o input de senha está visível ou não
   const [secure, setSecure] = useState(true);
 
@@ -22,39 +34,36 @@ export default function LoginScreen() {
         <Image source={require('../assets/logo.png')} style={styles.logo} resizeMode="contain" />
       </View>
 
-      {/* Área branca com inputs */}
+      {/* Área branca com inputs estilo do input e a linha abaixo dele */}
       <View style={styles.formArea}>
-        <TextInput
-          placeholder="Insira o Username"
-          style={styles.input}
-          placeholderTextColor="#333"
+
+        <StyledEmailInput
+          placeholder="Insira seu e-mail"
+          value={username}
+          onChangeText={setUsername}
         />
 
-        <View style={styles.passwordContainer}>
-          <TextInput
-            placeholder="Senha"
-            secureTextEntry={secure}
-            style={styles.passwordInput}
-            placeholderTextColor="#333"
-          />
-          <TouchableOpacity onPress={() => setSecure(!secure)}>
-            <Icon name={secure ? 'eye-slash' : 'eye'} size={width * 0.05} color="#333" />
-          </TouchableOpacity>
-        </View>
+        <StyledPasswordInput
+          placeholder="Insira sua senha"
+          value={password}
+          onChangeText={setPassword}
+        />
 
         {/* Links para telas */}
         <View style={styles.linkRow}>
-          <TouchableOpacity>
-            <Text style={styles.linkText}>esqueci minha senha →</Text>
+          <TouchableOpacity style={styles.linkWithIcon}>
+            <Text style={styles.linkText}>esqueci minha senha</Text>
+            <Icon name="long-arrow-right" size={width * 0.035} color="#f4c100" style={styles.arrow} />
           </TouchableOpacity>
-          <TouchableOpacity>
-            <Text style={styles.linkTextBold}>cadastrar</Text>
+          <TouchableOpacity style={styles.cadastrarContainer} onPress={() => navigation.navigate('Cadastrar')}          >
+            <Text style={styles.cadastrarTexto}>cadastrar</Text>
+            <View style={styles.cadastrarLinha} />
           </TouchableOpacity>
         </View>
 
         {/* Botão Continuar => verifica os inputs e depois passará para o home */}
         <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>Continuar</Text>
+          <Text style={styles.buttonText}>Entrar</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -88,40 +97,20 @@ const styles = StyleSheet.create({
     borderColor: '#f4c100',
   },
 
-  input: {
-    backgroundColor: '#ddd',
-    color: '#333',
-    paddingVertical: height * 0.015,
-    paddingHorizontal: width * 0.04,
-    borderRadius: 8,
-    fontSize: width * 0.04,
-    marginBottom: height * 0.02,
-  },
-
-  passwordContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#ddd',
-    borderRadius: 8,
-    paddingHorizontal: width * 0.04,
-    marginBottom: height * 0.02,
-  },
-
-  passwordInput: {
-    flex: 1,
-    paddingVertical: height * 0.015,
-    color: '#000',
-    fontSize: width * 0.04,
-  },
-
-  eye: {
-    padding: 4,
-  },
-
   linkRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: height * 0.025,
+  },
+  
+  linkWithIcon: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+
+  arrow: {
+    marginLeft: width * 0.015,
   },
 
   linkText: {
@@ -129,17 +118,31 @@ const styles = StyleSheet.create({
     fontSize: width * 0.035,
   },
 
-  linkTextBold: {
-    color: '#f4c100',
-    fontWeight: 'bold',
-    fontSize: width * 0.035,
+  cadastrarContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
   },
+  
+  cadastrarTexto: {
+    color: '#000',
+    fontSize: width * 0.035,
+    fontWeight: 'bold',
+  },
+  
+  cadastrarLinha: {
+    height: 2,
+    backgroundColor: '#FFCD00',
+    width: '100%',
+    marginTop: 2,
+  },
+  
 
   button: {
-    backgroundColor: '#f4c100',
+    backgroundColor: '#FFCD00',
     paddingVertical: height * 0.02,
     borderRadius: 10,
     alignItems: 'center',
+    width: '100%',
   },
 
   buttonText: {
@@ -148,3 +151,5 @@ const styles = StyleSheet.create({
     fontSize: width * 0.045,
   },
 });
+
+export default LoginScreen;
