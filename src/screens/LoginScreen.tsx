@@ -8,12 +8,18 @@ import StyledPasswordInput from '../components/StyledPasswordInput';
 import YellowButton from '../components/YellowButton';
 // @ts-ignore
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { goToFailure, goToSuccess } from '../utils/navigationHelpers';
 
 type RootStackParamList = {
   Login: undefined;
   Cadastro: undefined;
   EsqueciSenha: undefined;
+  Success: { action: string; nextScreen: keyof RootStackParamList };
+  Home: undefined;
+  ResetPassword: undefined;
+  Failure: { errorMessage: string; goBackTo: keyof RootStackParamList };
 };
+
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
@@ -27,6 +33,14 @@ const LoginScreen = ({ navigation }: Props) => {
   //variaveis para tratar os inputs de username e senha
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+
+  const handleLogin = () => {
+    console.log('BTN - LOGIN');
+    // Aqui você pode validar o username e password futuramente
+    // goToSuccess(navigation, 'Login realizado com sucesso!', 'Home');
+    // goToFailure(navigation, 'Login ou senha inválidos', 'Login');
+  };
+  
 
   return (
     <View style={styles.container}>
@@ -67,7 +81,7 @@ const LoginScreen = ({ navigation }: Props) => {
 
         </View>
 
-        <YellowButton title="Entrar" onPress={() => console.log('BTN - LOGIN')} />
+        <YellowButton title="Entrar" onPress={handleLogin} />
       </View>
     </View>
   );

@@ -16,7 +16,6 @@ const ResetPasswordScreen = () => {
   const handleResetPassword = () => {
     console.log('Resetando senha para:', email, token, newPassword);
     // adicionar logica para resetar a senha
-
   };
 
   return (
@@ -54,7 +53,7 @@ const ResetPasswordScreen = () => {
             onChangeText={setNewPassword}
         />
 
-        <YellowButton title="Recadastrar Senha" onPress={() => console.log('BTN - RESET PASSWORD')} />
+        <YellowButton title="Recadastrar Senha" onPress={handleResetPassword} />
     </View>
   );
 }

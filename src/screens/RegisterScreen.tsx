@@ -5,9 +5,14 @@ import StyledEmailInput from '../components/StyledEmailInput';
 import StyledPasswordInput from '../components/StyledPasswordInput';
 import YellowButton from '../components/YellowButton';
 
+import { goToSuccess } from '../utils/navigationHelpers';
+
 type RootStackParamList = {
   Login: undefined;
   Cadastro: undefined;
+  EsqueciSenha: undefined;
+  Success: { action: string; nextScreen: keyof RootStackParamList };
+  Home: undefined;
 };
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Cadastro'>;
@@ -18,6 +23,12 @@ export default function RegisterScreen({ navigation }: Props) {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [confirmarSenha, setConfirmarSenha] = useState('');
+
+  const handleRegister = () => {
+    console.log('BTN - CADASTRO');
+    // Aqui você pode validar o email e senha futuramente
+    // goToSuccess(navigation, 'Cadastro realizado com sucesso!', 'Home');
+  }
 
   return (
     <View style={styles.container}>
@@ -50,7 +61,7 @@ export default function RegisterScreen({ navigation }: Props) {
         />
       </View>
   
-      <YellowButton title="Cadastrar" onPress={() => console.log('BTN - CADASTRAR')} />
+      <YellowButton title="Cadastrar" onPress={handleRegister} />
     </View>
   );
 }
