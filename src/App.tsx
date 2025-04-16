@@ -6,7 +6,6 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
 import ForgotPasswordScreen from './screens/ForgotPasswordScreen';
-import SuccessScreen from './screens/SuccessScreen';
 import HomeScreen from './screens/HomeScreen';
 import FailureScreen from './screens/FailureScreen';
 
@@ -46,14 +45,6 @@ export default function App() {
                 color: '#fff',
               }
             }}
-        />
-        <Stack.Screen 
-          name="Success" 
-          component={SuccessScreen} 
-          options={{ headerShown: false,
-            animation: 'slide_from_right'
-
-          }} 
         />
 
 

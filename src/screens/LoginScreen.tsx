@@ -1,20 +1,22 @@
 // src/screens/LoginScreen.tsx
 import React, { useState } from 'react';
 
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Dimensions } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image, Dimensions } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import StyledEmailInput from '../components/StyledEmailInput';
 import StyledPasswordInput from '../components/StyledPasswordInput';
 import YellowButton from '../components/YellowButton';
 // @ts-ignore
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { goToFailure, goToSuccess } from '../utils/navigationHelpers';
+import { goToFailure } from '../utils/navigationHelpers';
+
+import { useApi } from '../hooks/useApi';
+
 
 type RootStackParamList = {
   Login: undefined;
   Cadastro: undefined;
   EsqueciSenha: undefined;
-  Success: { action: string; nextScreen: keyof RootStackParamList };
   Home: undefined;
   ResetPassword: undefined;
   Failure: { errorMessage: string; goBackTo: keyof RootStackParamList };
@@ -34,11 +36,16 @@ const LoginScreen = ({ navigation }: Props) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = () => {
-    console.log('BTN - LOGIN');
-    // Aqui você pode validar o username e password futuramente
-    // goToSuccess(navigation, 'Login realizado com sucesso!', 'Home');
-    // goToFailure(navigation, 'Login ou senha inválidos', 'Login');
+  const { logar } = useApi();
+
+  const handleLogin = async () => {
+    try {
+      console.log('Tentando logar com:', username, password);
+
+    } catch (error) {
+      console.error('Erro ao logar:', error);
+      goToFailure(navigation, 'Login ou senha inválidos', 'Login');
+    }
   };
   
 

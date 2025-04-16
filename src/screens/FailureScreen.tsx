@@ -22,7 +22,7 @@ export default function FailureScreen({ route, navigation }: Props) {
   useEffect(() => {
     const timer = setTimeout(() => {
       navigation.replace(goBackTo);
-    }, 2500);
+    }, 3000);
 
     return () => clearTimeout(timer);
   }, []);

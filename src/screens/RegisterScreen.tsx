@@ -5,14 +5,18 @@ import StyledEmailInput from '../components/StyledEmailInput';
 import StyledPasswordInput from '../components/StyledPasswordInput';
 import YellowButton from '../components/YellowButton';
 
-import { goToSuccess } from '../utils/navigationHelpers';
+import { useApi } from '../hooks/useApi';
+import { goToFailure } from '../utils/navigationHelpers';
+import RNRsa from 'react-native-rsa-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type RootStackParamList = {
   Login: undefined;
   Cadastro: undefined;
   EsqueciSenha: undefined;
-  Success: { action: string; nextScreen: keyof RootStackParamList };
   Home: undefined;
+  ResetPassword: undefined;
+  Failure: { errorMessage: string; goBackTo: keyof RootStackParamList };
 };
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Cadastro'>;
@@ -24,11 +28,22 @@ export default function RegisterScreen({ navigation }: Props) {
   const [senha, setSenha] = useState('');
   const [confirmarSenha, setConfirmarSenha] = useState('');
 
-  const handleRegister = () => {
-    console.log('BTN - CADASTRO');
-    // Aqui você pode validar o email e senha futuramente
-    // goToSuccess(navigation, 'Cadastro realizado com sucesso!', 'Home');
-  }
+  // Hook para chamar a API de cadastro
+  const { cadastrar } = useApi();
+
+  const handleRegister = async () => {
+    try {
+      if (senha !== confirmarSenha) {
+        goToFailure(navigation, 'As senhas não coincidem', 'Cadastro');
+        return;
+      }
+
+      
+    } catch (error) {
+      console.error('Erro ao cadastrar:', error);
+      goToFailure(navigation, 'Erro ao cadastrar', 'Cadastro');
+    }
+  };
 
   return (
     <View style={styles.container}>
