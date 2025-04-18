@@ -1,21 +1,46 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, Alert } from 'react-native';
+import { useApi } from '../hooks/useApi';
+import { goToFailure } from '../utils/navigationHelpers';
 // @ts-ignore
 import Icon from 'react-native-vector-icons/FontAwesome';
 import StyledEmailInput from '../components/StyledEmailInput';
 import StyledPasswordInput from '../components/StyledPasswordInput';
 import YellowButton from '../components/YellowButton';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+
+type RootStackParamList = {
+  ResetPassword: { email: string; token: string };
+  Login: undefined;
+};
+
+type Props = NativeStackScreenProps<RootStackParamList, 'ResetPassword'>;
 
 const { width, height } = Dimensions.get('window');
 
-const ResetPasswordScreen = () => {
-  const [email, setEmail] = useState('');
-  const [token, setToken] = useState('');
+const ResetPasswordScreen = ({ route, navigation }: Props) => {
+  const { email: emailParam, token: tokenParam } = route.params;
+  const [email, setEmail] = useState(emailParam);
+  const [token, setToken] = useState(tokenParam);
+  const { redefinir } = useApi();
+
   const [newPassword, setNewPassword] = useState('');
 
-  const handleResetPassword = () => {
-    console.log('Resetando senha para:', email, token, newPassword);
-    // adicionar logica para resetar a senha
+  const handleResetPassword =  async () =>  {
+    try {
+      if (!email || !token || !newPassword) {
+        Alert.alert('Erro', 'Preencha todos os campos');
+        return;
+      }
+  
+      await redefinir(email, token, newPassword);
+  
+      Alert.alert('Sucesso', 'Senha redefinida com sucesso!');
+      navigation.navigate('Login');
+    } catch (error: any) {
+      console.error('Erro ao redefinir senha:', error);
+      Alert.alert('Erro', error.response?.data?.message || 'Erro ao redefinir senha');
+    }
   };
 
   return (
@@ -67,9 +92,6 @@ const styles = StyleSheet.create({
       justifyContent: 'space-between',
     },
   
-    content: {
-      // bloco superior
-    },
   
     lockIcon: {
       alignSelf: 'center',

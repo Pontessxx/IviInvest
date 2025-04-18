@@ -41,10 +41,28 @@ const LoginScreen = ({ navigation }: Props) => {
   const handleLogin = async () => {
     try {
       console.log('Tentando logar com:', username, password);
-
-    } catch (error) {
-      console.error('Erro ao logar:', error);
-      goToFailure(navigation, 'Login ou senha inválidos', 'Login');
+  
+      const response = await logar(username, password);
+  
+      if (response.status === 200) {
+        console.log('Login bem-sucedido:', response.data);
+        navigation.navigate('Home');
+      } else {
+        goToFailure(navigation, 'Login ou senha inválidos', 'Login');
+      }
+  
+    } catch (error: any) {
+      if (error.response?.data?.message) {
+        const { message } = error.response.data;
+        console.error('Erro ao logar:', message);
+        goToFailure(navigation, message, 'Login');
+      } else if (error.message === 'Network Error') {
+        console.error('Erro de rede (possível problema de IP ou conexão):', error);
+        goToFailure(navigation, 'Erro de conexão com o servidor. Verifique o IP ou rede Wi-Fi.', 'Login');
+      } else {
+        console.error('Erro inesperado:', error);
+        goToFailure(navigation, 'Erro inesperado ao logar', 'Login');
+      }
     }
   };
   

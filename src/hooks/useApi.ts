@@ -1,6 +1,6 @@
 // src/hooks/useApi.ts
 import { useCallback } from 'react';
-import { registerUser, loginUser } from '../services/api';
+import { registerUser, loginUser, redefinirSenha } from '../services/api';
 
 export function useApi() {
   const cadastrar = useCallback(async (email: string, senha: string) => {
@@ -11,5 +11,9 @@ export function useApi() {
     return await loginUser(email, senha);
   }, []);
 
-  return { cadastrar, logar };
+  const redefinir = useCallback(async (email: string, token: string, novaSenha: string) => {
+    return await redefinirSenha(email, token, novaSenha);
+  }, []);
+
+  return { cadastrar, logar, redefinir };
 }

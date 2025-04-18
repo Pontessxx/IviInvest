@@ -37,11 +37,28 @@ export default function RegisterScreen({ navigation }: Props) {
         goToFailure(navigation, 'As senhas não coincidem', 'Cadastro');
         return;
       }
-
-      
-    } catch (error) {
-      console.error('Erro ao cadastrar:', error);
-      goToFailure(navigation, 'Erro ao cadastrar', 'Cadastro');
+  
+      const response = await cadastrar(email, senha);
+  
+      if (response.status === 201 || response.status === 200) {
+        console.log('Cadastro realizado com sucesso:', response.data);
+        navigation.navigate('Home');
+      } else {
+        goToFailure(navigation, 'Não foi possível realizar o cadastro.', 'Cadastro');
+      }
+  
+    } catch (error: any) {
+      if (error.response?.data?.message) {
+        const { message } = error.response.data;
+        console.error('Erro ao cadastrar:', message);
+        goToFailure(navigation, message, 'Cadastro');
+      } else if (error.message === 'Network Error') {
+        console.error('Erro de rede:', error);
+        goToFailure(navigation, 'Erro de conexão com o servidor.', 'Cadastro');
+      } else {
+        console.error('Erro inesperado:', error);
+        goToFailure(navigation, 'Erro inesperado ao cadastrar.', 'Cadastro');
+      }
     }
   };
 

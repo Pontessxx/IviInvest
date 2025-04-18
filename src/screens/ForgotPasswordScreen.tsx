@@ -1,18 +1,55 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, TouchableOpacity, Alert } from 'react-native';
 import StyledEmailInput from '../components/StyledEmailInput';
+import { gerarTokenRecuperacao } from '../services/api';
 
 // @ts-ignore
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+
+type RootStackParamList = {
+  ForgotPassword: undefined;
+  ResetPassword: { email: string; token: string };
+};
+
+type Props = NativeStackScreenProps<RootStackParamList, 'ForgotPassword'>;
+
 
 const { width, height } = Dimensions.get('window');
 
-const ForgotPasswordScreen =() =>{
+const ForgotPasswordScreen = ({ navigation }: Props) =>{
   const [email, setEmail] = useState('');
 
-  const handleSendToken = () => {
-    console.log('Token enviado para:', email);
+  const handleSendToken = async () => {
+    try {
+      if (!email) {
+        Alert.alert('Por favor, insira um e-mail válido');
+        return;
+      }
+
+      const response = await gerarTokenRecuperacao(email);
+      const token = response.data.token;
+
+      Alert.alert(
+        'Token gerado',
+        `Seu token: ${token}`,
+        [
+          {
+            text: 'OK',
+            onPress: () => navigation.navigate('ResetPassword', { email, token })
+          }
+        ]
+      );
+
+    } catch (error: any) {
+      if (error.response?.data?.message) {
+        Alert.alert(`Erro: ${error.response.data.message}`);
+      } else {
+        Alert.alert('Erro ao gerar token. Verifique sua conexão ou tente novamente.');
+      }
+    }
   };
+  
 
   return (
     <View style={styles.container}>
