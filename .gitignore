@@ -76,3 +76,6 @@ yarn-error.log
 
 # Ignorar config local do Android
 /android/local.properties
+
+# Ignorar config local
+.env

@@ -1,14 +1,15 @@
 // src/services/api.ts
+import {API_URL} from '@env';
 import axios from 'axios';
 
 
 const api = axios.create({
-  baseURL: 'http://192.168.15.6:8080',
+  baseURL: API_URL,
   timeout: 20000,
 });
 
 export const apiHealthConn = axios.create({
-  baseURL: 'http://192.168.15.6:8080',
+  baseURL: API_URL,
   timeout: 3000, // bem mais curto só pra testar conexão
 });
 
