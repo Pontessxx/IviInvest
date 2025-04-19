@@ -11,6 +11,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { goToFailure } from '../utils/navigationHelpers';
 
 import { useApi } from '../hooks/useApi';
+import { apiHealthCheck } from '../services/api';
 
 
 type RootStackParamList = {
@@ -23,46 +24,60 @@ type RootStackParamList = {
 };
 
 
-type Props = NativeStackScreenProps<RootStackParamList, 'Login'>;
+type Props = NativeStackScreenProps<any> & {
+  route: any;
+  navigation: any;
+  onLoginSuccess: () => void; // ⬅️ Adicione isso
+};
+
 
 // responsividade, pega a width e a altura do dispositivo
 const { width, height } = Dimensions.get('window');
 
-const LoginScreen = ({ navigation }: Props) => {
+const LoginScreen = ({ navigation, onLoginSuccess }: Props) => {
   //variavel para verificar se o input de senha está visível ou não
   const [secure, setSecure] = useState(true);
 
   //variaveis para tratar os inputs de username e senha
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const { logar } = useApi();
 
   const handleLogin = async () => {
+    if (!username || !password) return;
+  
+    setLoading(true);
+  
+    try {
+      // Tenta fazer o health check antes de tudo
+      await apiHealthCheck();
+    } catch (err) {
+      setLoading(false);
+      console.error('Servidor offline:', err);
+      goToFailure(navigation, 'Servidor indisponível. Verifique sua conexão ou tente mais tarde.', 'Login');
+      return;
+    }
+  
     try {
       console.log('Tentando logar com:', username, password);
-  
       const response = await logar(username, password);
   
       if (response.status === 200) {
         console.log('Login bem-sucedido:', response.data);
-        navigation.navigate('Home');
+        onLoginSuccess();
       } else {
         goToFailure(navigation, 'Login ou senha inválidos', 'Login');
       }
-  
     } catch (error: any) {
       if (error.response?.data?.message) {
-        const { message } = error.response.data;
-        console.error('Erro ao logar:', message);
-        goToFailure(navigation, message, 'Login');
-      } else if (error.message === 'Network Error') {
-        console.error('Erro de rede (possível problema de IP ou conexão):', error);
-        goToFailure(navigation, 'Erro de conexão com o servidor. Verifique o IP ou rede Wi-Fi.', 'Login');
+        goToFailure(navigation, error.response.data.message, 'Login');
       } else {
-        console.error('Erro inesperado:', error);
-        goToFailure(navigation, 'Erro inesperado ao logar', 'Login');
+        goToFailure(navigation, 'Erro ao processar login. Tente novamente mais tarde.', 'Login');
       }
+    } finally {
+      setLoading(false);
     }
   };
   
@@ -106,7 +121,7 @@ const LoginScreen = ({ navigation }: Props) => {
 
         </View>
 
-        <YellowButton title="Entrar" onPress={handleLogin} />
+        <YellowButton title="Entrar" onPress={handleLogin} loading={loading} />
       </View>
     </View>
   );

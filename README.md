@@ -2,10 +2,7 @@
 # Getting Started
 
 ## Step 1: Start Metro
-
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
-
-To start the Metro dev server, run the following command from the root of your React Native project:
+Primeiro passo: inicie o node
 
 ```sh
 # Using npm
@@ -17,8 +14,12 @@ yarn start
 
 ## Step 2: Build and run your app
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
+Faça a build do projeto:
 
+```sh
+# Using npm
+npx react-native build-android
+```
 ### Android
 
 ```sh
@@ -28,36 +29,6 @@ npx react-native run-android
 # OR using Yarn
 yarn android
 ```
-
-### iOS
-
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
-
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
-
-```sh
-bundle install
-```
-
-Then, and every time you update your native dependencies, run:
-
-```sh
-bundle exec pod install
-```
-
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
-
-```sh
-# Using npm
-npm run ios
-
-# OR using Yarn
-yarn ios
-```
-
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
-
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
 
 ## Pegando os logs 
 ```sh
@@ -70,5 +41,26 @@ assim consigo pegar os consoles.log do app
 npx react-native run-android
 ```
 
-## Step 3: Modify your app
+## Step 3:
 
+Para garantir que rode o backend terá que realizar o clone do projeto :
+*[link-github-bem-aqui]()*
+
+### adicione a variavel de ambiente no backend:
+
+Crie um arquivo chamado *.env* dentro da pasta `./Iviinvest` e adicione as seguintes variaveis
+```
+JWT_SECRET=estaChaveTemQueTer64Caracteres
+EMAIL_GMAIL=SeuEmail@Email.com
+EMAIL_SENHA_APP=senhadoappemail
+```
+
+### Verifique se o seu ip
+
+Vá até o CMD e digite
+```cmd
+ipconfig
+```
+retornará o ip da sua maquina visto a internet que esteja conectado, lembre-se que caso esteja conectado com cabo coloque o ip da coneção a cabo, caso esteja wifi coloque o ip da placa wifi
+
+###

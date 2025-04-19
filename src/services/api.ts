@@ -4,11 +4,16 @@ import axios from 'axios';
 
 const api = axios.create({
   baseURL: 'http://192.168.15.6:8080',
-  timeout: 5000,
+  timeout: 20000,
 });
-  
+
+export const apiHealthConn = axios.create({
+  baseURL: 'http://192.168.15.6:8080',
+  timeout: 3000, // bem mais curto só pra testar conexão
+});
+
 export const apiHealthCheck = async () => {
-  return await api.get('/api/auth');
+  return await apiHealthConn.get('/api/auth');
 };
 
 export const registerUser = async (email: string, senha: string) => {

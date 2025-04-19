@@ -9,6 +9,7 @@ import { useApi } from '../hooks/useApi';
 import { goToFailure } from '../utils/navigationHelpers';
 import RNRsa from 'react-native-rsa-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { apiHealthCheck } from '../services/api';
 
 type RootStackParamList = {
   Login: undefined;
@@ -27,26 +28,43 @@ export default function RegisterScreen({ navigation }: Props) {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [confirmarSenha, setConfirmarSenha] = useState('');
+  const [loading, setLoading] = useState(false);
 
   // Hook para chamar a API de cadastro
   const { cadastrar } = useApi();
 
   const handleRegister = async () => {
+    if (!email || !senha || !confirmarSenha) {
+      goToFailure(navigation, 'Preencha todos os campos.', 'Cadastro');
+      return;
+    }
+
+    if (senha !== confirmarSenha) {
+      goToFailure(navigation, 'As senhas não coincidem', 'Cadastro');
+      return;
+    }
+
+    setLoading(true);
+
     try {
-      if (senha !== confirmarSenha) {
-        goToFailure(navigation, 'As senhas não coincidem', 'Cadastro');
-        return;
-      }
-  
+      await apiHealthCheck();
+    } catch (err) {
+      console.error('Servidor offline:', err);
+      setLoading(false);
+      goToFailure(navigation, 'Servidor indisponível. Verifique sua conexão ou tente mais tarde.', 'Cadastro');
+      return;
+    }
+
+    try {
       const response = await cadastrar(email, senha);
-  
-      if (response.status === 201 || response.status === 200) {
+
+      if (response.status === 200 || response.status === 201) {
         console.log('Cadastro realizado com sucesso:', response.data);
         navigation.navigate('Home');
       } else {
         goToFailure(navigation, 'Não foi possível realizar o cadastro.', 'Cadastro');
       }
-  
+
     } catch (error: any) {
       if (error.response?.data?.message) {
         const { message } = error.response.data;
@@ -59,6 +77,8 @@ export default function RegisterScreen({ navigation }: Props) {
         console.error('Erro inesperado:', error);
         goToFailure(navigation, 'Erro inesperado ao cadastrar.', 'Cadastro');
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -93,7 +113,7 @@ export default function RegisterScreen({ navigation }: Props) {
         />
       </View>
   
-      <YellowButton title="Cadastrar" onPress={handleRegister} />
+      <YellowButton title="Cadastrar" onPress={handleRegister} loading={loading}/>
     </View>
   );
 }
