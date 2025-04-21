@@ -20,11 +20,13 @@ type RootStackParamList = {
   Failure: { errorMessage: string; goBackTo: keyof RootStackParamList };
 };
 
-type Props = NativeStackScreenProps<RootStackParamList, 'Cadastro'>;
+type Props = NativeStackScreenProps<RootStackParamList, 'Cadastro'> & {
+  onLoginSuccess: (email: string) => void;
+};
 
 const { width, height } = Dimensions.get('window');
 
-export default function RegisterScreen({ navigation }: Props) {
+export default function RegisterScreen({ navigation, onLoginSuccess }: Props) {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [confirmarSenha, setConfirmarSenha] = useState('');
@@ -60,7 +62,7 @@ export default function RegisterScreen({ navigation }: Props) {
 
       if (response.status === 200 || response.status === 201) {
         console.log('Cadastro realizado com sucesso:', response.data);
-        navigation.navigate('Home');
+        onLoginSuccess(email);
       } else {
         goToFailure(navigation, 'Não foi possível realizar o cadastro.', 'Cadastro');
       }

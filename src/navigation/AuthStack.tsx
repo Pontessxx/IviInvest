@@ -21,17 +21,16 @@ export default function AuthStack({ onLoginSuccess }: { onLoginSuccess: (email: 
             {props => <LoginScreen {...props} onLoginSuccess={onLoginSuccess} />}
         </Stack.Screen>
         <Stack.Screen 
-          name="Cadastro" 
-          component={RegisterScreen}  
+          name="Cadastro"
           options={{
             headerStyle: {
               backgroundColor: '#000',
             },
-            headerTintColor:{
-              color: '#fff',
-            }
-        }}
-        />
+            headerTintColor: '#fff',
+          }}
+        >
+          {props => <RegisterScreen {...props} onLoginSuccess={onLoginSuccess} />}
+        </Stack.Screen>
         <Stack.Screen 
             name="EsqueciSenha" 
             component={ForgotPasswordScreen} 
