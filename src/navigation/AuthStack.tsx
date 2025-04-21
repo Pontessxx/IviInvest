@@ -14,7 +14,7 @@ type AuthStackParamList = {
   };  
 const Stack = createNativeStackNavigator<AuthStackParamList>();
 
-export default function AuthStack({ onLoginSuccess }: { onLoginSuccess: () => void }) {
+export default function AuthStack({ onLoginSuccess }: { onLoginSuccess: (email: string) => void }) {
   return (
     <Stack.Navigator initialRouteName="Login">
         <Stack.Screen name="Login" options={{ headerShown: false }}>

@@ -6,15 +6,18 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 
 const { width } = Dimensions.get('window');
 
-const Header = () => {
+const Header = ({ email }: { email: string }) => {
+
+    const firstChar = email?.[0]?.toUpperCase() || '?';
+
   return (
     <View style={styles.header}>
       <TouchableOpacity style={styles.avatarButton}>
-        <Text style={styles.avatarText}>N</Text>
+        <Text style={styles.avatarText}>{firstChar}</Text>
       </TouchableOpacity>
 
       <View style={styles.nameContainer}>
-        <Text style={styles.nameText}>Nome</Text>
+        <Text style={styles.nameText}>Perfil</Text>
         <Icon name="arrow-right" size={14} color="#FFF" style={{ marginLeft: 6 }} />
       </View>
 

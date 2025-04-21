@@ -6,11 +6,12 @@ import { Provider as PaperProvider } from 'react-native-paper';
 
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userEmail, setUserEmail] = useState('');
 
   return (
     <PaperProvider>
       <NavigationContainer>
-        {isAuthenticated ? <AppStack /> : <AuthStack onLoginSuccess={() => setIsAuthenticated(true)} />}
+        {isAuthenticated ? <AppStack email={userEmail}/> : <AuthStack onLoginSuccess={(email:string) => {setUserEmail(email); setIsAuthenticated(true)}} />}
       </NavigationContainer>
     </PaperProvider>
   );

@@ -6,21 +6,22 @@ import FailureScreen from '../screens/FailureScreen';
 import ResetPasswordScreen from '../screens/ResetPasswordScreen';
 
 export type AppStackParamList = {
-  Home: undefined;
+  Home: { email: string };
   Failure: { errorMessage: string; goBackTo: keyof AppStackParamList };
   ResetPassword: { email: string; token: string };
 };
 
 const Stack = createNativeStackNavigator<AppStackParamList>();
 
-export default function AppStack() {
+export default function AppStack({ email }: { email: string }) {
   return (
     <Stack.Navigator initialRouteName="Home">
       <Stack.Screen 
-        name="Home" 
-        component={HomeScreen} 
+        name="Home"
         options={{ headerShown: false }}
-      />
+      >
+        {props => <HomeScreen {...props} email={email} />}
+      </Stack.Screen>
       <Stack.Screen 
         name="Failure" 
         component={FailureScreen} 

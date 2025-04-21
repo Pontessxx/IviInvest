@@ -66,7 +66,7 @@ const LoginScreen = ({ navigation, onLoginSuccess }: Props) => {
   
       if (response.status === 200) {
         console.log('Login bem-sucedido:', response.data);
-        onLoginSuccess();
+        onLoginSuccess(username);
       } else {
         goToFailure(navigation, 'Login ou senha inválidos', 'Login');
       }

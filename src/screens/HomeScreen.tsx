@@ -4,17 +4,19 @@ import React from 'react';
 import { View, Text, StyleSheet, Dimensions, ScrollView  } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
+type Props = {
+  email: string;
+};
 
-
-const HomeScreen = () => {
+const HomeScreen = ({ email }: Props) => {
   
 
   return (
     <View style={styles.container}>
-      <Header/>
+      <Header email={email}/>
       <View style={styles.content}>
           <ScrollView contentContainerStyle={{ paddingBottom: 20 }}>
-            <Text style={styles.msginitial}>Olá Username, seja bem-vindo(a)!</Text>
+            <Text style={styles.msginitial}>Olá {email}, seja bem-vindo(a)!</Text>
             {/* ...resto do conteúdo... */}
           </ScrollView>
       </View>
