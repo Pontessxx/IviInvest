@@ -5,6 +5,7 @@ type RootStackParamList = {
   Cadastro: undefined;
   EsqueciSenha: undefined;
   Home: undefined;
+  Profile: undefined;
   ResetPassword: undefined;
   Failure: { errorMessage: string; goBackTo: keyof RootStackParamList };
 };

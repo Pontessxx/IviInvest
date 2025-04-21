@@ -1,6 +1,7 @@
 // src/services/api.ts
 import {API_URL} from '@env';
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 const api = axios.create({
@@ -14,7 +15,7 @@ export const apiHealthConn = axios.create({
 });
 
 export const apiHealthCheck = async () => {
-  return await apiHealthConn.get('/api/auth');
+  return await apiHealthConn.get('/api/health');
 };
 
 export const registerUser = async (email: string, senha: string) => {
@@ -37,5 +38,17 @@ export const redefinirSenha = async (email: string, token: string, novaSenha: st
   });
 };
 
+// Interceptor para adicionar o token automaticamente
+api.interceptors.request.use(async (config) => {
+  const token = await AsyncStorage.getItem('token');
+
+  if (token && config.headers) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+
+  return config;
+}, (error) => {
+  return Promise.reject(error);
+});
 
 export default api;

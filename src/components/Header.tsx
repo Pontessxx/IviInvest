@@ -1,25 +1,29 @@
-// src/components/Header.tsx
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
-// @ts-ignore
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { useNavigation } from '@react-navigation/native';
 
 const { width } = Dimensions.get('window');
 
 const Header = ({ email }: { email: string }) => {
+  const navigation = useNavigation();
 
-    const firstChar = email?.[0]?.toUpperCase() || '?';
+  const firstChar = email?.[0]?.toUpperCase() || '?';
+
+  const handleGoToProfile = () => {
+    navigation.navigate('Profile' as never); // ajustamos isso no AppStack
+  };
 
   return (
     <View style={styles.header}>
-      <TouchableOpacity style={styles.avatarButton}>
+      <TouchableOpacity style={styles.avatarButton} onPress={handleGoToProfile}>
         <Text style={styles.avatarText}>{firstChar}</Text>
       </TouchableOpacity>
 
-      <View style={styles.nameContainer}>
+      <TouchableOpacity style={styles.nameContainer} onPress={handleGoToProfile}>
         <Text style={styles.nameText}>Perfil</Text>
         <Icon name="arrow-right" size={14} color="#FFF" style={{ marginLeft: 6 }} />
-      </View>
+      </TouchableOpacity>
 
       <TouchableOpacity style={styles.bellButton}>
         <Icon name="bell" size={22} color="#FFF" />

@@ -14,6 +14,8 @@ import { useApi } from '../hooks/useApi';
 import { apiHealthCheck } from '../services/api';
 
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 type RootStackParamList = {
   Login: undefined;
   Cadastro: undefined;
@@ -64,9 +66,12 @@ const LoginScreen = ({ navigation, onLoginSuccess }: Props) => {
       console.log('Tentando logar com:', username, password);
       const response = await logar(username, password);
   
-      if (response.status === 200) {
-        console.log('Login bem-sucedido:', response.data);
-        onLoginSuccess(username);
+      const { token, email } = response.data || {};
+
+      if (token && email) {
+        await AsyncStorage.setItem('token', token);
+        await AsyncStorage.setItem('email', email);
+        onLoginSuccess();
       } else {
         goToFailure(navigation, 'Login ou senha inválidos', 'Login');
       }

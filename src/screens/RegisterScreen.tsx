@@ -61,8 +61,10 @@ export default function RegisterScreen({ navigation, onLoginSuccess }: Props) {
       const response = await cadastrar(email, senha);
 
       if (response.status === 200 || response.status === 201) {
-        console.log('Cadastro realizado com sucesso:', response.data);
-        onLoginSuccess(email);
+        const { token, email } = response.data;
+        await AsyncStorage.setItem('token', token);
+        await AsyncStorage.setItem('email', email);
+        onLoginSuccess();
       } else {
         goToFailure(navigation, 'Não foi possível realizar o cadastro.', 'Cadastro');
       }

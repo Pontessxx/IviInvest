@@ -4,13 +4,20 @@ import React from 'react';
 import { View, Text, StyleSheet, Dimensions, ScrollView  } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
-type Props = {
-  email: string;
-};
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useEffect, useState } from 'react';
 
-const HomeScreen = ({ email }: Props) => {
+const HomeScreen = () => {
+  const [email, setEmail] = useState('');
+
+  useEffect(() => {
+    const fetchEmail = async () => {
+      const savedEmail = await AsyncStorage.getItem('email');
+      if (savedEmail) setEmail(savedEmail);
+    };
+    fetchEmail();
+  }, []);
   
-
   return (
     <View style={styles.container}>
       <Header email={email}/>
