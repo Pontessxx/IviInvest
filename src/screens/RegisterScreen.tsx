@@ -10,6 +10,7 @@ import { goToFailure } from '../utils/navigationHelpers';
 import RNRsa from 'react-native-rsa-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { apiHealthCheck } from '../services/api';
+import { useAuth } from '../context/AuthContext';
 
 type RootStackParamList = {
   Login: undefined;
@@ -20,17 +21,16 @@ type RootStackParamList = {
   Failure: { errorMessage: string; goBackTo: keyof RootStackParamList };
 };
 
-type Props = NativeStackScreenProps<RootStackParamList, 'Cadastro'> & {
-  onLoginSuccess: (email: string) => void;
-};
+type Props = NativeStackScreenProps<RootStackParamList, 'Cadastro'>;
 
 const { width, height } = Dimensions.get('window');
 
-export default function RegisterScreen({ navigation, onLoginSuccess }: Props) {
+export default function RegisterScreen({ navigation }: Props) {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [confirmarSenha, setConfirmarSenha] = useState('');
   const [loading, setLoading] = useState(false);
+  const { login } = useAuth();
 
   // Hook para chamar a API de cadastro
   const { cadastrar } = useApi();
@@ -64,7 +64,7 @@ export default function RegisterScreen({ navigation, onLoginSuccess }: Props) {
         const { token, email } = response.data;
         await AsyncStorage.setItem('token', token);
         await AsyncStorage.setItem('email', email);
-        onLoginSuccess();
+        await login(token);
       } else {
         goToFailure(navigation, 'Não foi possível realizar o cadastro.', 'Cadastro');
       }

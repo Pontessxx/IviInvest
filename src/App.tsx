@@ -1,21 +1,23 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import AuthStack from './navigation/AuthStack';
 import AppStack from './navigation/AppStack';
 import { Provider as PaperProvider } from 'react-native-paper';
+import { AuthProvider, useAuth } from './context/AuthContext';
+
+function Routes() {
+  const { isAuthenticated } = useAuth();
+  return isAuthenticated ? <AppStack /> : <AuthStack />;
+}
 
 export default function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
   return (
-    <PaperProvider>
-      <NavigationContainer>
-        {isAuthenticated ? (
-          <AppStack />
-        ) : (
-          <AuthStack onLoginSuccess={() => setIsAuthenticated(true)} />
-        )}
-      </NavigationContainer>
-    </PaperProvider>
+    <AuthProvider>
+      <PaperProvider>
+        <NavigationContainer>
+          <Routes />
+        </NavigationContainer>
+      </PaperProvider>
+    </AuthProvider>
   );
 }

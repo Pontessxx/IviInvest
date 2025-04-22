@@ -14,40 +14,37 @@ type AuthStackParamList = {
   };  
 const Stack = createNativeStackNavigator<AuthStackParamList>();
 
-export default function AuthStack({ onLoginSuccess }: { onLoginSuccess: (email: string) => void }) {
+export default function AuthStack() {
   return (
     <Stack.Navigator initialRouteName="Login">
-        <Stack.Screen name="Login" options={{ headerShown: false }}>
-            {props => <LoginScreen {...props} onLoginSuccess={onLoginSuccess} />}
-        </Stack.Screen>
-        <Stack.Screen 
-          name="Cadastro"
-          options={{
-            headerStyle: {
-              backgroundColor: '#000',
-            },
-            headerTintColor: '#fff',
-          }}
-        >
-          {props => <RegisterScreen {...props} onLoginSuccess={onLoginSuccess} />}
-        </Stack.Screen>
-        <Stack.Screen 
-            name="EsqueciSenha" 
-            component={ForgotPasswordScreen} 
-            options={{
-              title: 'Esqueci a senha',
-              headerStyle: {
-                backgroundColor: '#000',
-              },
-              headerTintColor:{
-                color: '#fff',
-              }
-            }}
-        />
-
-        {/* <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false, animation: 'slide_from_right'}} /> */}
-        <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} options={{ headerShown: false, animation: 'slide_from_right'}} />
-        <Stack.Screen name="Failure" component={FailureScreen} options={{ headerShown: false, animation: 'slide_from_right'}} />
+      <Stack.Screen name="Login" options={{ headerShown: false }} component={LoginScreen} />
+      <Stack.Screen
+        name="Cadastro"
+        options={{
+          headerStyle: { backgroundColor: '#000' },
+          headerTintColor: '#fff',
+        }}
+        component={RegisterScreen}
+      />
+      <Stack.Screen
+        name="EsqueciSenha"
+        component={ForgotPasswordScreen}
+        options={{
+          title: 'Esqueci a senha',
+          headerStyle: { backgroundColor: '#000' },
+          headerTintColor: '#fff',
+        }}
+      />
+      <Stack.Screen
+        name="ResetPassword"
+        component={ResetPasswordScreen}
+        options={{ headerShown: false, animation: 'slide_from_right' }}
+      />
+      <Stack.Screen
+        name="Failure"
+        component={FailureScreen}
+        options={{ headerShown: false, animation: 'slide_from_right' }}
+      />
     </Stack.Navigator>
   );
 }

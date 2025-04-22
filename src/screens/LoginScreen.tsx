@@ -15,6 +15,7 @@ import { apiHealthCheck } from '../services/api';
 
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useAuth } from '../context/AuthContext';
 
 type RootStackParamList = {
   Login: undefined;
@@ -29,14 +30,13 @@ type RootStackParamList = {
 type Props = NativeStackScreenProps<any> & {
   route: any;
   navigation: any;
-  onLoginSuccess: () => void; // ⬅️ Adicione isso
 };
 
 
 // responsividade, pega a width e a altura do dispositivo
 const { width, height } = Dimensions.get('window');
 
-const LoginScreen = ({ navigation, onLoginSuccess }: Props) => {
+const LoginScreen = ({ navigation }: Props) => {
   //variavel para verificar se o input de senha está visível ou não
   const [secure, setSecure] = useState(true);
 
@@ -46,6 +46,7 @@ const LoginScreen = ({ navigation, onLoginSuccess }: Props) => {
   const [loading, setLoading] = useState(false);
 
   const { logar } = useApi();
+  const { login } = useAuth();
 
   const handleLogin = async () => {
     if (!username || !password) return;
@@ -71,7 +72,7 @@ const LoginScreen = ({ navigation, onLoginSuccess }: Props) => {
       if (token && email) {
         await AsyncStorage.setItem('token', token);
         await AsyncStorage.setItem('email', email);
-        onLoginSuccess();
+        await login(token);
       } else {
         goToFailure(navigation, 'Login ou senha inválidos', 'Login');
       }

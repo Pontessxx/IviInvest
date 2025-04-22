@@ -7,6 +7,7 @@ import { Picker } from '@react-native-picker/picker';
 //@ts-ignore
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { getPerfilInvestidor, updatePerfilInvestidor } from '../services/api';
+import { useAuth } from '../context/AuthContext';
 
 const { width, height } = Dimensions.get('window');
 
@@ -15,6 +16,7 @@ export default function ProfileScreen() {
   const [email, setEmail] = useState('');
   const [perfil, setPerfil] = useState('');
   const perfis = ['Agressivo', 'Moderado', 'Conservador'];
+  const { logout } = useAuth();
 
   const toggleSwitch = async () => {
     const novoEstado = !notificationsEnabled;
@@ -63,6 +65,15 @@ export default function ProfileScreen() {
   };
 
   const firstChar = email?.[0]?.toUpperCase() || '?';
+
+  const handleLogout = async () => {
+    await AsyncStorage.multiRemove([
+      'email',
+      'perfilInvestidor',
+      'notificationsEnabled'
+    ]);
+    await logout(); // isso vai ativar o AuthStack automaticamente
+  };
 
   return (
     <View style={styles.container}>
@@ -118,7 +129,7 @@ export default function ProfileScreen() {
         </View>
       </View>
 
-      <TouchableOpacity style={styles.logoutButton}>
+      <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
         <View style={styles.buttonContent}>
           <Icon name="times" size={20} color="#f44" style={styles.buttonIcon} />
           <Text style={styles.logoutText}>Sair da conta</Text>
