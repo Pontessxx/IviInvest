@@ -51,4 +51,15 @@ api.interceptors.request.use(async (config) => {
   return Promise.reject(error);
 });
 
+
+// Buscar o perfil atual do usuário
+export const getPerfilInvestidor = async () => {
+  return await api.get('/api/auth/perfil');
+};
+
+// Atualizar o perfil de investidor
+export const updatePerfilInvestidor = async (perfil: string) => {
+  return await api.put('/api/auth/perfil', { perfilInvestidor: perfil });
+};
+
 export default api;

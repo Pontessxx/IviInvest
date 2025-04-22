@@ -1,25 +1,66 @@
 
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Dimensions, Switch, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, Switch, TouchableOpacity, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-// @ts-ignore
+import { Picker } from '@react-native-picker/picker';
+
+//@ts-ignore
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { getPerfilInvestidor, updatePerfilInvestidor } from '../services/api';
 
 const { width, height } = Dimensions.get('window');
 
 export default function ProfileScreen() {
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [email, setEmail] = useState('');
+  const [perfil, setPerfil] = useState('');
+  const perfis = ['Agressivo', 'Moderado', 'Conservador'];
 
-  const toggleSwitch = () => setNotificationsEnabled(previousState => !previousState);
-
+  const toggleSwitch = async () => {
+    const novoEstado = !notificationsEnabled;
+    setNotificationsEnabled(novoEstado);
+    await AsyncStorage.setItem('notificationsEnabled', novoEstado.toString());
+  };
+  
   useEffect(() => {
-    const fetchEmail = async () => {
+    const fetchData = async () => {
       const savedEmail = await AsyncStorage.getItem('email');
       if (savedEmail) setEmail(savedEmail);
+  
+      const savedPerfil = await AsyncStorage.getItem('perfilInvestidor');
+      if (savedPerfil) {
+        setPerfil(savedPerfil);
+      } else {
+        try {
+          const response = await getPerfilInvestidor();
+          const perfilApi = response.data?.perfilInvestidor || '';
+          setPerfil(perfilApi);
+          await AsyncStorage.setItem('perfilInvestidor', perfilApi);
+        } catch (error) {
+          console.error('Erro ao buscar perfil:', error);
+        }
+      }
+  
+      const savedNotificacao = await AsyncStorage.getItem('notificationsEnabled');
+      if (savedNotificacao !== null) {
+        setNotificationsEnabled(savedNotificacao === 'true');
+      }
     };
-    fetchEmail();
+  
+    fetchData();
   }, []);
+
+  const handlePerfilChange = async (novoPerfil: string) => {
+    setPerfil(novoPerfil);
+    try {
+      await updatePerfilInvestidor(novoPerfil);
+      await AsyncStorage.setItem('perfilInvestidor', novoPerfil); // ← SALVA NO STORAGE
+      Alert.alert('Sucesso', 'Perfil de investidor atualizado!');
+    } catch (error) {
+      console.error('Erro ao atualizar perfil:', error);
+      Alert.alert('Erro', 'Não foi possível atualizar o perfil.');
+    }
+  };
 
   const firstChar = email?.[0]?.toUpperCase() || '?';
 
@@ -31,21 +72,29 @@ export default function ProfileScreen() {
         </View>
         <View>
           <Text style={styles.username}>{email || 'Username'}</Text>
-          <Text style={styles.userLevel}>Perfil <Text style={styles.agressivo}>Agressivo</Text></Text>
+          <Text style={styles.userLevel}>Perfil <Text style={styles.agressivo}>{perfil}</Text></Text>
         </View>
       </View>
 
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Perfil de Investidor</Text>
-        <TouchableOpacity style={styles.investorButton}>
-          <Text style={styles.investorText}>Agressivo</Text>
-          <Icon name="angle-right" size={20} color="#fff" />
-        </TouchableOpacity>
+        <View style={styles.dropdown}>
+        <Picker
+          selectedValue={perfil}
+          onValueChange={handlePerfilChange}
+          style={styles.picker}
+          dropdownIconColor="#fff"
+        >
+          <Picker.Item label="Selecione um perfil" value="" enabled={false} />
+          {perfis.map(item => (
+            <Picker.Item key={item} label={item} value={item} color="#000" />
+          ))}
+        </Picker>
+        </View>
       </View>
 
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Configuração</Text>
-        
         <View style={styles.settingItem}>
           <View style={styles.settingLabel}>
             <Icon name="bell" size={18} color="#fff" style={{ marginRight: 10 }} />
@@ -70,11 +119,17 @@ export default function ProfileScreen() {
       </View>
 
       <TouchableOpacity style={styles.logoutButton}>
-        <Text style={styles.logoutText}>Sair da conta</Text>
+        <View style={styles.buttonContent}>
+          <Icon name="times" size={20} color="#f44" style={styles.buttonIcon} />
+          <Text style={styles.logoutText}>Sair da conta</Text>
+        </View>
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.deleteButton}>
-        <Text style={styles.deleteText}>Excluir Perfil e dados</Text>
+        <View style={styles.buttonContent}>
+          <Icon name="trash" size={20} color="#fff" style={styles.buttonIcon} />
+          <Text style={styles.deleteText}>Excluir Perfil e dados</Text>
+        </View>
       </TouchableOpacity>
     </View>
   );
@@ -132,17 +187,14 @@ const styles = StyleSheet.create({
     color: '#fff',
     marginBottom: height * 0.015,
   },
-  investorButton: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+  dropdown: {
     backgroundColor: '#333',
-    padding: width * 0.035,
     borderRadius: 8,
   },
-  investorText: {
+  picker: {
     color: '#fff',
-    fontSize: width * 0.04,
+    height: 55,
+    width: '100%',
   },
   settingItem: {
     flexDirection: 'row',
@@ -157,6 +209,15 @@ const styles = StyleSheet.create({
   settingText: {
     color: '#fff',
     fontSize: width * 0.037,
+  },
+  buttonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  
+  buttonIcon: {
+    marginRight: 10,
   },
   logoutButton: {
     borderColor: '#f44',
