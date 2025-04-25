@@ -1,6 +1,12 @@
 // src/hooks/useApi.ts
 import { useCallback } from 'react';
-import { registerUser, loginUser, redefinirSenha } from '../services/api';
+import {
+  registerUser,
+  loginUser,
+  redefinirSenha,
+  send2FACode,
+  verify2FA,
+} from '../services/api';
 
 export function useApi() {
   const cadastrar = useCallback(async (email: string, senha: string) => {
@@ -15,5 +21,19 @@ export function useApi() {
     return await redefinirSenha(email, token, novaSenha);
   }, []);
 
-  return { cadastrar, logar, redefinir };
+  const enviarCodigo2FA = useCallback(async (email: string) => {
+    return await send2FACode(email);
+  }, []);
+
+  const verificarCodigo2FA = useCallback(async (email: string, token: string) => {
+    return await verify2FA(email, token);
+  }, []);
+
+  return {
+    logar,
+    cadastrar,
+    redefinir,
+    enviarCodigo2FA,
+    verificarCodigo2FA,
+  };
 }

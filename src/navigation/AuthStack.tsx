@@ -5,11 +5,13 @@ import RegisterScreen from '../screens/RegisterScreen';
 import ForgotPasswordScreen from '../screens/ForgotPasswordScreen';
 import ResetPasswordScreen from '../screens/ResetPasswordScreen';
 import FailureScreen from '../screens/FailureScreen';
+import Verify2FAScreen from '../screens/Verify2FAScreen';
 
 type AuthStackParamList = {
     Login: undefined;
     Cadastro: undefined;
     EsqueciSenha: undefined;
+    Verify2FA: undefined;
     ResetPassword: { email: string; token: string };
   };  
 const Stack = createNativeStackNavigator<AuthStackParamList>();
@@ -18,6 +20,7 @@ export default function AuthStack() {
   return (
     <Stack.Navigator initialRouteName="Login">
       <Stack.Screen name="Login" options={{ headerShown: false }} component={LoginScreen} />
+      <Stack.Screen name="Verify2FA" options={{ headerShown: false }} component={Verify2FAScreen} />
       <Stack.Screen
         name="Cadastro"
         options={{

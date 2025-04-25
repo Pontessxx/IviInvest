@@ -7,7 +7,6 @@ import YellowButton from '../components/YellowButton';
 
 import { useApi } from '../hooks/useApi';
 import { goToFailure } from '../utils/navigationHelpers';
-import RNRsa from 'react-native-rsa-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { apiHealthCheck } from '../services/api';
 import { useAuth } from '../context/AuthContext';
@@ -32,34 +31,41 @@ export default function RegisterScreen({ navigation }: Props) {
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
 
-  // Hook para chamar a API de cadastro
   const { cadastrar } = useApi();
 
   const handleRegister = async () => {
-    if (!email || !senha || !confirmarSenha) {
+    const sanitizedEmail = email.trim();
+    const sanitizedSenha = senha.trim();
+    const sanitizedConfirmar = confirmarSenha.trim();
+  
+    if (!sanitizedEmail || !sanitizedSenha || !sanitizedConfirmar) {
       goToFailure(navigation, 'Preencha todos os campos.', 'Cadastro');
       return;
     }
-
-    if (senha !== confirmarSenha) {
+  
+    const emailValido = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(sanitizedEmail);
+    if (!emailValido) {
+      goToFailure(navigation, 'Insira um e-mail válido.', 'Cadastro');
+      return;
+    }
+  
+    const senhaValida = /^[a-zA-Z0-9]{6,}$/.test(sanitizedSenha);
+    if (!senhaValida) {
+      goToFailure(navigation, 'A senha deve conter pelo menos 6 letras e não pode conter caracteres especiais.', 'Cadastro');
+      return;
+    }
+  
+    if (sanitizedSenha !== sanitizedConfirmar) {
       goToFailure(navigation, 'As senhas não coincidem', 'Cadastro');
       return;
     }
-
+  
     setLoading(true);
-
+  
     try {
       await apiHealthCheck();
-    } catch (err) {
-      console.error('Servidor offline:', err);
-      setLoading(false);
-      goToFailure(navigation, 'Servidor indisponível. Verifique sua conexão ou tente mais tarde.', 'Cadastro');
-      return;
-    }
-
-    try {
-      const response = await cadastrar(email, senha);
-
+      const response = await cadastrar(sanitizedEmail, sanitizedSenha);
+  
       if (response.status === 200 || response.status === 201) {
         const { token, email } = response.data;
         await AsyncStorage.setItem('token', token);
@@ -68,17 +74,13 @@ export default function RegisterScreen({ navigation }: Props) {
       } else {
         goToFailure(navigation, 'Não foi possível realizar o cadastro.', 'Cadastro');
       }
-
+  
     } catch (error: any) {
       if (error.response?.data?.message) {
-        const { message } = error.response.data;
-        console.error('Erro ao cadastrar:', message);
-        goToFailure(navigation, message, 'Cadastro');
+        goToFailure(navigation, error.response.data.message, 'Cadastro');
       } else if (error.message === 'Network Error') {
-        console.error('Erro de rede:', error);
         goToFailure(navigation, 'Erro de conexão com o servidor.', 'Cadastro');
       } else {
-        console.error('Erro inesperado:', error);
         goToFailure(navigation, 'Erro inesperado ao cadastrar.', 'Cadastro');
       }
     } finally {

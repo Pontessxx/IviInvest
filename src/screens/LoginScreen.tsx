@@ -45,7 +45,7 @@ const LoginScreen = ({ navigation }: Props) => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const { logar } = useApi();
+  const { logar, enviarCodigo2FA } = useApi();
   const { login } = useAuth();
 
   const handleLogin = async () => {
@@ -65,14 +65,19 @@ const LoginScreen = ({ navigation }: Props) => {
   
     try {
       console.log('Tentando logar com:', username, password);
-      const response = await logar(username, password);
-  
-      const { token, email } = response.data || {};
+    const response = await logar(username, password);
 
-      if (token && email) {
-        await AsyncStorage.setItem('token', token);
-        await AsyncStorage.setItem('email', email);
-        await login(token);
+    const { email } = response.data || {};
+
+    if (email) {
+      await AsyncStorage.setItem('email', email);
+
+      // ✅ Envia o código de 2FA por e-mail
+      await enviarCodigo2FA(email);
+
+      // ✅ Navega para a verificação
+      navigation.replace('Verify2FA');
+      
       } else {
         goToFailure(navigation, 'Login ou senha inválidos', 'Login');
       }

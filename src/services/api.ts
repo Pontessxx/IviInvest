@@ -38,6 +38,16 @@ export const redefinirSenha = async (email: string, token: string, novaSenha: st
   });
 };
 
+// Enviar token 2FA para o email após login
+export const send2FACode = async (email: string) => {
+  return await api.post('/api/auth/2fa/send', { email });
+};
+
+// Verificar código 2FA para receber o JWT
+export const verify2FA = async (email: string, token: string) => {
+  return await api.post('/api/auth/2fa/verify', { email, token });
+};
+
 // Interceptor para adicionar o token automaticamente
 api.interceptors.request.use(async (config) => {
   const token = await AsyncStorage.getItem('token');
