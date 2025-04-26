@@ -6,7 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const api = axios.create({
   baseURL: API_URL,
-  timeout: 20000,
+  timeout: 22000,
 });
 
 export const apiHealthConn = axios.create({

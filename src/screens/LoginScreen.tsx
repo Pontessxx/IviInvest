@@ -66,7 +66,7 @@ const LoginScreen = ({ navigation }: Props) => {
     try {
       console.log('Tentando logar com:', username, password);
     const response = await logar(username, password);
-
+    
     const { email } = response.data || {};
 
     if (email) {
@@ -77,7 +77,7 @@ const LoginScreen = ({ navigation }: Props) => {
 
       // ✅ Navega para a verificação
       navigation.replace('Verify2FA');
-      
+
       } else {
         goToFailure(navigation, 'Login ou senha inválidos', 'Login');
       }
