@@ -24,7 +24,7 @@ type Props = NativeStackScreenProps<RootStackParamList, 'Cadastro'>;
 
 const { width, height } = Dimensions.get('window');
 
-export default function RegisterScreen({ navigation }: Props) {
+const RegisterScreen = ({ navigation }: Props) => {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [confirmarSenha, setConfirmarSenha] = useState('');
@@ -156,3 +156,5 @@ const styles = StyleSheet.create({
   },
   
 });
+
+export default RegisterScreen;

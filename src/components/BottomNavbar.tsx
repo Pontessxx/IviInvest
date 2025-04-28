@@ -1,28 +1,33 @@
 // src/components/BottomNavbar.tsx
 import React from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
 //@ts-ignore
 import Icon from 'react-native-vector-icons/Entypo';
+import { AppStackParamList } from '../navigation/AppStack';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useNavigation } from '@react-navigation/native';
 
 const BottomNavbar = () => {
+  const navigation = useNavigation<NativeStackNavigationProp<AppStackParamList>>();
+
   return (
     <View style={styles.bottomNav}>
-      <View style={styles.navItem}>
+      <TouchableOpacity style={styles.navItem} onPress={() => navigation.replace('Home')}>
         <Icon name="home" size={24} color="#FFF" />
         <Text style={styles.navText}>Início</Text>
-      </View>
-      <View style={styles.navItem}>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.navItem}>
         <Icon name="wallet" size={24} color="#FFF" />
         <Text style={styles.navText}>Carteiras</Text>
-      </View>
-      <View style={styles.navItem}>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.navItem} onPress={() => navigation.replace('Chat')}>
         <Icon name="chat" size={24} color="#FFF" />
         <Text style={styles.navText}>Ivi</Text>
-      </View>
-      <View style={styles.navItem}>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.navItem}>
         <Icon name="cog" size={24} color="#FFF" />
         <Text style={styles.navText}>Menu</Text>
-      </View>
+      </TouchableOpacity>
     </View>
   );
 };

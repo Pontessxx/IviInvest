@@ -48,6 +48,10 @@ export const verify2FA = async (email: string, token: string) => {
   return await api.post('/api/auth/2fa/verify', { email, token });
 };
 
+export const deleteAccount = async () => {
+  return await api.delete('/api/auth');
+};
+
 // Interceptor para adicionar o token automaticamente
 api.interceptors.request.use(async (config) => {
   const token = await AsyncStorage.getItem('token');

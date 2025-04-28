@@ -11,8 +11,15 @@ import { useAuth } from '../context/AuthContext';
 
 const { width, height } = Dimensions.get('window');
 
-export default function ProfileScreen() {
+
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { AppStackParamList } from '../navigation/AppStack';
+
+
+const ProfileScreen = () => {
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+  const navigation = useNavigation<NativeStackNavigationProp<AppStackParamList>>();
   const [email, setEmail] = useState('');
   const [perfil, setPerfil] = useState('');
   const perfis = ['Agressivo', 'Moderado', 'Conservador'];
@@ -136,7 +143,7 @@ export default function ProfileScreen() {
         </View>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.deleteButton}>
+      <TouchableOpacity style={styles.deleteButton} onPress={() => {navigation.navigate('DeleteAccount')}}>
         <View style={styles.buttonContent}>
           <Icon name="trash" size={20} color="#fff" style={styles.buttonIcon} />
           <Text style={styles.deleteText}>Excluir Perfil e dados</Text>
@@ -256,3 +263,6 @@ const styles = StyleSheet.create({
     fontSize: width * 0.04,
   },
 });
+
+
+export default ProfileScreen;

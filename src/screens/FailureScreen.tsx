@@ -16,7 +16,7 @@ type Props = NativeStackScreenProps<RootStackParamList, 'Failure'>;
 
 const { width, height } = Dimensions.get('window');
 
-export default function FailureScreen({ route, navigation }: Props) {
+const FailureScreen = ({ route, navigation }: Props) =>{
   const { errorMessage, goBackTo } = route.params;
 
   useEffect(() => {
@@ -69,3 +69,5 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
+
+export default FailureScreen;

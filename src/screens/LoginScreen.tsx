@@ -50,6 +50,12 @@ const LoginScreen = ({ navigation }: Props) => {
 
   const handleLogin = async () => {
     if (!username || !password) return;
+
+    const emailValido = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(username.trim());
+    if (!emailValido) {
+      goToFailure(navigation, 'Insira um e-mail válido.', 'Login');
+      return;
+    }
   
     setLoading(true);
   
@@ -64,32 +70,33 @@ const LoginScreen = ({ navigation }: Props) => {
     }
   
     try {
-      console.log('Tentando logar com:', username, password);
-    const response = await logar(username, password);
-    
-    const { email } = response.data || {};
+      const emailLowerCase = username.trim().toLowerCase();
+      console.log('Tentando logar com:', emailLowerCase, password);
+      const response = await logar(emailLowerCase, password);
+      
+      const { email } = response.data || {};
 
-    if (email) {
-      await AsyncStorage.setItem('email', email);
+      if (email) {
+        await AsyncStorage.setItem('email', email);
 
-      // ✅ Envia o código de 2FA por e-mail
-      await enviarCodigo2FA(email);
+        // ✅ Envia o código de 2FA por e-mail
+        await enviarCodigo2FA(email);
 
-      // ✅ Navega para a verificação
-      navigation.replace('Verify2FA');
+        // ✅ Navega para a verificação
+        navigation.replace('Verify2FA');
 
-      } else {
-        goToFailure(navigation, 'Login ou senha inválidos', 'Login');
+        } else {
+          goToFailure(navigation, 'Login ou senha inválidos', 'Login');
+        }
+      } catch (error: any) {
+        if (error.response?.data?.message) {
+          goToFailure(navigation, error.response.data.message, 'Login');
+        } else {
+          goToFailure(navigation, 'Erro ao processar login. Tente novamente mais tarde.', 'Login');
+        }
+      } finally {
+        setLoading(false);
       }
-    } catch (error: any) {
-      if (error.response?.data?.message) {
-        goToFailure(navigation, error.response.data.message, 'Login');
-      } else {
-        goToFailure(navigation, 'Erro ao processar login. Tente novamente mais tarde.', 'Login');
-      }
-    } finally {
-      setLoading(false);
-    }
   };
   
 

@@ -12,7 +12,7 @@ import { useApi } from '../hooks/useApi';
 import Icon from 'react-native-vector-icons/FontAwesome';
 const { width, height } = Dimensions.get('window');
 
-export default function Verify2FAScreen() {
+const Verify2FAScreen = () => {
   const [code, setCode] = useState('');
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');
@@ -107,3 +107,5 @@ const styles = StyleSheet.create({
     borderColor: '#f4c100',
   },
 });
+
+export default Verify2FAScreen;

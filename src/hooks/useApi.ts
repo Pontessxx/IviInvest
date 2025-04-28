@@ -6,6 +6,7 @@ import {
   redefinirSenha,
   send2FACode,
   verify2FA,
+  deleteAccount,
 } from '../services/api';
 
 export function useApi() {
@@ -29,11 +30,16 @@ export function useApi() {
     return await verify2FA(email, token);
   }, []);
 
+  const deletarConta = useCallback(async () => {
+    return await deleteAccount();
+  }, []);
+
   return {
     logar,
     cadastrar,
     redefinir,
     enviarCodigo2FA,
     verificarCodigo2FA,
+    deletarConta,
   };
 }
