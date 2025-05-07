@@ -27,7 +27,7 @@ export const loginUser = async (email: string, senha: string) => {
 };
 
 export const gerarTokenRecuperacao = async (email: string) => {
-  return await api.get(`/api/recover/token/${email}`);
+  return await api.post('/api/recover/token', { email });
 };
 
 export const redefinirSenha = async (email: string, token: string, novaSenha: string) => {

@@ -1,110 +1,85 @@
+// src/screens/ChatScreen.tsx
+import React, { useEffect, useState } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Dimensions,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform
+} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Header from '../components/Header';
 import BottomNavbar from '../components/BottomNavbar';
-import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Dimensions, ScrollView } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width, height } = Dimensions.get('window');
 
-const ChatScreen = () => {
-  const [formularioEnviado, setFormularioEnviado] = useState(false);
-  const [formData, setFormData] = useState({
-    objetivo: '',
-    prazo: '',
-    valorInicial: '',
-    aporteMensal: '',
-    patrimonioAtual: '',
-    liquidez: '',
-    setoresEvitar: [],
-  });
-
-  const [mensagens, setMensagens] = useState<string[]>([]);
+export default function ChatScreen() {
+  const [mensagens, setMensagens] = useState<string[]>([
+    'Olá, sou a IVI, sua assistente virtual de investimentos.'
+  ]);
+  const [input, setInput] = useState('');
   const [email, setEmail] = useState('');
 
   useEffect(() => {
-    const fetchEmail = async () => {
-      const savedEmail = await AsyncStorage.getItem('email');
-      if (savedEmail) setEmail(savedEmail);
-    };
-    fetchEmail();
+    AsyncStorage.getItem('email').then(value => {
+      if (value) setEmail(value);
+    });
   }, []);
-  
-  const handleEnviarFormulario = () => {
-    console.log('Dados enviados:', formData);
 
-    setMensagens([
-      `Olá! Simulei 2 carteiras para seu perfil ${formData.objetivo} em ${formData.prazo}.`
-    ]);
-
-    setFormularioEnviado(true);
-  };
+  function handleSend() {
+    if (!input.trim()) return;
+    // adiciona mensagem do usuário
+    setMensagens(prev => [...prev, input.trim()]);
+    // aqui você chamaria sua API / Lógica de resposta e adicionaria a resposta da IVI:
+    // setMensagens(prev => [...prev, input.trim(), respostaDaIvi]);
+    setInput('');
+  }
 
   return (
     <View style={styles.container}>
       <Header email={email} />
-
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        {!formularioEnviado ? (
-          <View style={styles.formulario}>
-            <Text style={styles.label}>Objetivo</Text>
-            <TextInput
-              style={styles.input}
-              value={formData.objetivo}
-              onChangeText={(text) => setFormData({ ...formData, objetivo: text })}
-            />
-
-            <Text style={styles.label}>Prazo</Text>
-            <TextInput
-              style={styles.input}
-              value={formData.prazo}
-              onChangeText={(text) => setFormData({ ...formData, prazo: text })}
-            />
-
-            <Text style={styles.label}>Valor Inicial (R$)</Text>
-            <TextInput
-              style={styles.input}
-              value={formData.valorInicial}
-              onChangeText={(text) => setFormData({ ...formData, valorInicial: text })}
-              keyboardType="numeric"
-            />
-
-            <Text style={styles.label}>Aporte Mensal (R$)</Text>
-            <TextInput
-              style={styles.input}
-              value={formData.aporteMensal}
-              onChangeText={(text) => setFormData({ ...formData, aporteMensal: text })}
-              keyboardType="numeric"
-            />
-
-            <Text style={styles.label}>Patrimônio Atual (R$)</Text>
-            <TextInput
-              style={styles.input}
-              value={formData.patrimonioAtual}
-              onChangeText={(text) => setFormData({ ...formData, patrimonioAtual: text })}
-              keyboardType="numeric"
-            />
-
-            <Text style={styles.label}>Tipo de Liquidez</Text>
-            <TextInput
-              style={styles.input}
-              value={formData.liquidez}
-              onChangeText={(text) => setFormData({ ...formData, liquidez: text })}
-            />
-
-            <TouchableOpacity style={styles.button} onPress={handleEnviarFormulario}>
-              <Text style={styles.buttonText}>Fazer Simulação</Text>
-            </TouchableOpacity>
+      <ScrollView 
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        {mensagens.map((msg, i) => (
+          <View
+            key={i}
+            style={[
+              styles.bubble,
+              i === 0
+                ? styles.iviBubble
+                : i % 2 === 0
+                ? styles.iviBubble
+                : styles.userBubble
+            ]}
+          >
+            <Text style={styles.bubbleText}>{msg}</Text>
           </View>
-        ) : (
-          <View style={styles.chat}>
-            {mensagens.map((mensagem, index) => (
-              <View key={index} style={styles.mensagemIvi}>
-                <Text style={{ color: '#fff' }}>{mensagem}</Text>
-              </View>
-            ))}
-          </View>
-        )}
+        ))}
       </ScrollView>
+
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        keyboardVerticalOffset={80}
+      >
+        <View style={styles.inputRow}>
+          <TextInput
+            style={styles.input}
+            placeholder="Escreva sua dúvida..."
+            placeholderTextColor="#888"
+            value={input}
+            onChangeText={setInput}
+          />
+          <TouchableOpacity onPress={handleSend} style={styles.sendButton}>
+            <Text style={styles.sendText}>➤</Text>
+          </TouchableOpacity>
+        </View>
+      </KeyboardAvoidingView>
 
       <BottomNavbar />
     </View>
@@ -114,47 +89,50 @@ const ChatScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#121212',
+    backgroundColor: '#121212'
   },
   scrollContent: {
-    paddingHorizontal: width * 0.05,
-    paddingBottom: 20,
+    padding: 16,
+    paddingBottom: 100,
   },
-  formulario: {
-    marginTop: 20,
+  bubble: {
+    marginBottom: 12,
+    padding: 12,
+    borderRadius: 12,
+    maxWidth: '80%',
   },
-  label: {
+  iviBubble: {
+    backgroundColor: '#333',
+    alignSelf: 'flex-start',
+  },
+  userBubble: {
+    backgroundColor: '#0f0',
+    alignSelf: 'flex-end',
+  },
+  bubbleText: {
     color: '#fff',
-    marginBottom: 5,
+  },
+  inputRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    backgroundColor: '#1e1e1e',
   },
   input: {
+    flex: 1,
     backgroundColor: '#2c2c2c',
-    color: '#fff',
     borderRadius: 8,
-    padding: 10,
-    marginBottom: 15,
-  },
-  button: {
-    borderColor: '#fff',
-    borderWidth: 1,
-    padding: 15,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginTop: 10,
-  },
-  buttonText: {
+    paddingHorizontal: 12,
     color: '#fff',
-    fontWeight: 'bold',
+    height: 44,
   },
-  chat: {
-    marginTop: 20,
+  sendButton: {
+    marginLeft: 8,
+    padding: 8,
   },
-  mensagemIvi: {
-    backgroundColor: '#333',
-    padding: 15,
-    borderRadius: 12,
-    marginBottom: 10,
+  sendText: {
+    color: '#0f0',
+    fontSize: 24,
   },
 });
-
-export default ChatScreen;

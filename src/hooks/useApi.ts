@@ -40,6 +40,6 @@ export function useApi() {
     redefinir,
     enviarCodigo2FA,
     verificarCodigo2FA,
-    deletarConta,
+    deletarConta,   
   };
 }
