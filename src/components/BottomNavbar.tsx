@@ -16,7 +16,7 @@ const BottomNavbar = () => {
         <Icon name="home" size={24} color="#FFF" />
         <Text style={styles.navText}>Início</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.navItem}>
+      <TouchableOpacity style={styles.navItem} onPress={() => navigation.replace('Formulario')}>
         <Icon name="wallet" size={24} color="#FFF" />
         <Text style={styles.navText}>Carteiras</Text>
       </TouchableOpacity>
@@ -24,9 +24,9 @@ const BottomNavbar = () => {
         <Icon name="chat" size={24} color="#FFF" />
         <Text style={styles.navText}>Ivi</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.navItem}>
-        <Icon name="cog" size={24} color="#FFF" />
-        <Text style={styles.navText}>Menu</Text>
+      <TouchableOpacity style={styles.navItem} onPress={() => navigation.replace('HistoricoSimulacoes')}>
+        <Icon name="clock" size={24} color="#FFF"/>
+        <Text style={styles.navText}>Historico</Text>
       </TouchableOpacity>
     </View>
   );

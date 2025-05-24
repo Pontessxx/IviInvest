@@ -7,10 +7,18 @@ import ResetPasswordScreen from '../screens/ResetPasswordScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import ChatScreen from '../screens/ChatScreen';
 import DeleteAccountScreen from '../screens/DeleteAccountScreen';
+import FormularioScreen from '../screens/FormularioScreen';
+import HistoricoSimulacoesScreen from '../screens/HistoricoSimulacoesScreen';
+import SimulacaoDetalheScreen from '../screens/SimulacaoDetalheScreen';
+import SimulacaoCarteiraScreen from '../screens/SimulacaoCarteiraScreen';
 
 export type AppStackParamList = {
   Home: undefined;
   Profile: undefined;
+  Formulario: undefined;
+  SimulacaoCarteira: { percentuais: any, ativos: any };
+  HistoricoSimulacoes: undefined;
+  SimulacaoDetalhe: { tipoCarteira: 'conservadora' | 'agressiva'; objetivoId: number };
   Chat: undefined;
   DeleteAccount: undefined;
   Failure: { errorMessage: string; goBackTo: keyof AppStackParamList };
@@ -47,6 +55,26 @@ export default function AppStack() {
       <Stack.Screen 
         name="ResetPassword" 
         component={ResetPasswordScreen} 
+        options={{ headerShown: false }}
+      />
+       <Stack.Screen 
+        name="Formulario" 
+        component={FormularioScreen} 
+        options={{ headerShown: false }}
+      />
+       <Stack.Screen 
+        name="HistoricoSimulacoes" 
+        component={HistoricoSimulacoesScreen} 
+        options={{ headerShown: false }}
+      />
+       <Stack.Screen 
+        name="SimulacaoDetalhe" 
+        component={SimulacaoDetalheScreen} 
+        options={{ headerShown: false }}
+      />
+       <Stack.Screen 
+        name="SimulacaoCarteira" 
+        component={SimulacaoCarteiraScreen} 
         options={{ headerShown: false }}
       />
     </Stack.Navigator>

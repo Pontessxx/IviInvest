@@ -1,19 +1,13 @@
-// src/screens/ChatScreen.tsx
 import React, { useEffect, useState } from 'react';
 import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  Dimensions,
-  ScrollView,
-  KeyboardAvoidingView,
-  Platform
+  View, Text, TextInput, TouchableOpacity,
+  StyleSheet, Dimensions, ScrollView,
+  KeyboardAvoidingView, Platform
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Header from '../components/Header';
 import BottomNavbar from '../components/BottomNavbar';
+import { useApi } from '../hooks/useApi';
 
 const { width, height } = Dimensions.get('window');
 
@@ -24,38 +18,41 @@ export default function ChatScreen() {
   const [input, setInput] = useState('');
   const [email, setEmail] = useState('');
 
+  const { chatLivre } = useApi();
+
   useEffect(() => {
     AsyncStorage.getItem('email').then(value => {
       if (value) setEmail(value);
     });
   }, []);
 
-  function handleSend() {
-    if (!input.trim()) return;
-    // adiciona mensagem do usuário
-    setMensagens(prev => [...prev, input.trim()]);
-    // aqui você chamaria sua API / Lógica de resposta e adicionaria a resposta da IVI:
-    // setMensagens(prev => [...prev, input.trim(), respostaDaIvi]);
+  async function handleSend() {
+    const texto = input.trim();
+    if (!texto) return;
+
+    setMensagens(prev => [...prev, texto]);
     setInput('');
+
+    try {
+      const resposta = await chatLivre(texto);
+      setMensagens(prev => [...prev, resposta]);
+    } catch (e) {
+      console.warn('Erro ao chamar IA:', e);
+      setMensagens(prev => [...prev, 'Erro ao obter resposta da IVI.']);
+    }
   }
 
   return (
     <View style={styles.container}>
       <Header email={email} />
-      <ScrollView 
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
+
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         {mensagens.map((msg, i) => (
           <View
             key={i}
             style={[
               styles.bubble,
-              i === 0
-                ? styles.iviBubble
-                : i % 2 === 0
-                ? styles.iviBubble
-                : styles.userBubble
+              i === 0 || i % 2 === 0 ? styles.iviBubble : styles.userBubble
             ]}
           >
             <Text style={styles.bubbleText}>{msg}</Text>
@@ -87,14 +84,8 @@ export default function ChatScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#121212'
-  },
-  scrollContent: {
-    padding: 16,
-    paddingBottom: 100,
-  },
+  container: { flex: 1, backgroundColor: '#121212' },
+  scrollContent: { padding: 16, paddingBottom: 100 },
   bubble: {
     marginBottom: 12,
     padding: 12,
@@ -109,9 +100,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#0f0',
     alignSelf: 'flex-end',
   },
-  bubbleText: {
-    color: '#fff',
-  },
+  bubbleText: { color: '#fff' },
   inputRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -127,12 +116,6 @@ const styles = StyleSheet.create({
     color: '#fff',
     height: 44,
   },
-  sendButton: {
-    marginLeft: 8,
-    padding: 8,
-  },
-  sendText: {
-    color: '#0f0',
-    fontSize: 24,
-  },
+  sendButton: { marginLeft: 8, padding: 8 },
+  sendText: { color: '#0f0', fontSize: 24 },
 });
