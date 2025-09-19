@@ -1,5 +1,13 @@
 
 # Getting Started
+![img](https://github.com/Pontessxx/Api_iviinvest/blob/master/figma_img.png)
+| Nome | RM |
+|------|-----|
+| Henrique Pontes Oliveira | RM98036 |
+| Levy Nascimento Junior | RM98655 |
+| Rafael Autieri dos Anjos | RM550885 |
+| Rafael Carvalho Mattos | RM99874 |
+| Vinicius Santos Yamashita de Farias | rm550885 |
 
 ## Step 1: Start Metro
 Primeiro passo: inicie o node
