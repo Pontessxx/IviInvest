@@ -1,5 +1,8 @@
 // src/screens/LoginScreen.tsx
 import React, { useState } from 'react';
+import { PermissionsAndroid, Platform, Alert } from "react-native";
+import { verifyFace } from '../services/faceApi';
+import { launchCamera } from 'react-native-image-picker';
 
 import { View, Text, TouchableOpacity, StyleSheet, Image, Dimensions } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -49,6 +52,8 @@ const LoginScreen = ({ navigation }: Props) => {
   const { login } = useAuth();
 
   const handleLogin = async () => {
+    await AsyncStorage.removeItem('token');
+    
     if (!username || !password) return;
 
     const emailValido = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(username.trim());
@@ -98,7 +103,67 @@ const LoginScreen = ({ navigation }: Props) => {
         setLoading(false);
       }
   };
-  
+
+  const handleLoginFace = async () => {
+    try {
+      // ✅ 1. Pedir permissão da câmera (Android)
+      if (Platform.OS === "android") {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.CAMERA,
+          {
+            title: "Permissão de Câmera",
+            message: "O aplicativo precisa acessar a câmera para realizar o login facial.",
+            buttonNeutral: "Perguntar depois",
+            buttonNegative: "Cancelar",
+            buttonPositive: "OK",
+          }
+        );
+
+        if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+          Alert.alert("Permissão negada", "Não é possível usar o FaceID sem acesso à câmera.");
+          return;
+        }
+      }
+
+      // ✅ 2. Abrir a câmera
+      const result = await new Promise<string | null>((resolve, reject) => {
+        launchCamera({ mediaType: "photo" }, (response) => {
+          if (response.didCancel) return resolve(null);
+          if (response.errorCode) return reject(response.errorMessage);
+          const uri = response.assets?.[0]?.uri;
+          resolve(uri || null);
+        });
+      });
+
+      if (!result) return;
+
+      // ✅ 3. Enviar imagem para API Python
+      const res = await verifyFace(result);
+
+      // ✅ 4. Validar resposta
+      if (res.data.status === "ok") {
+        const { email, token } = res.data;
+
+        if (!token) {
+          goToFailure(navigation, "Erro ao obter token do backend Java.", "Login");
+          return;
+        }
+
+        // 🔒 Salvar credenciais e autenticar no contexto
+        await AsyncStorage.setItem("email", email);
+        await AsyncStorage.setItem("token", token);
+        await login(token); // chama o AuthContext → entra no AppStack
+
+        console.log("✅ Login facial bem-sucedido:", email);
+      } else {
+        goToFailure(navigation, "Rosto não reconhecido", "Login");
+      }
+    } catch (err) {
+      console.error("❌ Erro FaceID:", err);
+      goToFailure(navigation, "Erro ao verificar FaceID", "Login");
+    }
+  };
+
 
   return (
     <View style={styles.container}>
@@ -140,6 +205,13 @@ const LoginScreen = ({ navigation }: Props) => {
         </View>
 
         <YellowButton title="Entrar" onPress={handleLogin} loading={loading} />
+        <TouchableOpacity
+          style={[styles.button, { marginTop: 15, backgroundColor: '#333' }]}
+          onPress={handleLoginFace}
+        >
+          <Text style={{ color: '#fff', fontWeight: 'bold' }}>Entrar com FaceID</Text>
+        </TouchableOpacity>
+
       </View>
     </View>
   );

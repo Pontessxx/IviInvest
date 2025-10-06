@@ -53,6 +53,7 @@ npx react-native run-android
 
 Para garantir que rode o backend terá que realizar o clone do projeto :
 *[API - IVI INVEST](https://github.com/Pontessxx/Api_iviinvest)*
+*[API - FACE RECOG](https://github.com/Pontessxx/API_FACERECOG_IVINVEST)*
 
 ### adicione a variavel de ambiente no backend:
 

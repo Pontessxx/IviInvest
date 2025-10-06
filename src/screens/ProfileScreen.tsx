@@ -4,6 +4,12 @@ import { View, Text, StyleSheet, Dimensions, Switch, TouchableOpacity, Alert } f
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Picker } from '@react-native-picker/picker';
 
+import { launchCamera } from 'react-native-image-picker';
+
+import { registerFace } from '../services/faceApi';
+import { PermissionsAndroid, Platform } from 'react-native';
+
+
 //@ts-ignore
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { getPerfilInvestidor, updatePerfilInvestidor } from '../services/api';
@@ -82,6 +88,35 @@ const ProfileScreen = () => {
     await logout(); // isso vai ativar o AuthStack automaticamente
   };
 
+  const handleRegisterFace = async () => {
+    try {
+      const emailUser = await AsyncStorage.getItem("email");
+      if (!emailUser) {
+        Alert.alert("Erro", "Usuário não logado");
+        return;
+      }
+
+      const photoUri = await new Promise<string | null>((resolve, reject) => {
+        launchCamera({ mediaType: 'photo' }, (response) => {
+          if (response.didCancel) return resolve(null);
+          if (response.errorCode) return reject(response.errorMessage);
+          const uri = response.assets?.[0]?.uri;
+          resolve(uri || null);
+        });
+      });
+
+      if (!photoUri) return;
+      console.log("📷 URI capturada:", photoUri);
+
+      const res = await registerFace(emailUser, photoUri);
+      Alert.alert("Sucesso", res.data.message || "FaceID cadastrado/atualizado!");
+    } catch (err) {
+      console.error("Erro FaceID:", err);
+      Alert.alert("Erro", "Não foi possível cadastrar/atualizar o FaceID");
+    }
+  };
+
+
   return (
     <View style={styles.container}>
       <View style={styles.profileHeader}>
@@ -142,6 +177,19 @@ const ProfileScreen = () => {
           <Text style={styles.logoutText}>Sair da conta</Text>
         </View>
       </TouchableOpacity>
+
+      <TouchableOpacity 
+        style={[styles.logoutButton, { borderColor: '#FFCD00', marginTop: height * 0.02 }]} 
+        onPress={handleRegisterFace}
+      >
+        <View style={styles.buttonContent}>
+          <Icon name="camera" size={20} color="#FFCD00" style={styles.buttonIcon} />
+          <Text style={{ color: '#FFCD00', fontWeight: 'bold', fontSize: width * 0.04 }}>
+            {`Cadastrar/Atualizar FaceID`}
+          </Text>
+        </View>
+      </TouchableOpacity>
+
 
       <TouchableOpacity style={styles.deleteButton} onPress={() => {navigation.navigate('DeleteAccount')}}>
         <View style={styles.buttonContent}>
