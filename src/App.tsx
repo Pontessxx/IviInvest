@@ -4,6 +4,7 @@ import AuthStack from './navigation/AuthStack';
 import AppStack from './navigation/AppStack';
 import { Provider as PaperProvider } from 'react-native-paper';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import Toast from 'react-native-toast-message';
 
 function Routes() {
   const { isAuthenticated } = useAuth();
@@ -17,6 +18,7 @@ export default function App() {
         <NavigationContainer>
           <Routes />
         </NavigationContainer>
+        <Toast />
       </PaperProvider>
     </AuthProvider>
   );

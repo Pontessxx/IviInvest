@@ -1,9 +1,10 @@
 {
   "extends": "@react-native/typescript-config/tsconfig.json",
   "compilerOptions": {
-    "types": ["react-native", "react-native-dotenv"],
+    "types": ["react-native"],
     "strict": true,
     "esModuleInterop": true,
     "baseUrl": "./src"
-  }
+  },
+  "include": ["src", "env.d.ts"]
 }

@@ -3,6 +3,10 @@ import React, { useState } from 'react';
 import { PermissionsAndroid, Platform, Alert } from "react-native";
 import { verifyFace } from '../services/faceApi';
 import { launchCamera } from 'react-native-image-picker';
+import Toast from 'react-native-toast-message';
+import { ActivityIndicator } from 'react-native';
+
+import { API_URL, API_FACE } from '@env';
 
 import { View, Text, TouchableOpacity, StyleSheet, Image, Dimensions } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -47,6 +51,8 @@ const LoginScreen = ({ navigation }: Props) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [loadingFace, setLoadingFace] = useState(false);
+
 
   const { logar, enviarCodigo2FA } = useApi();
   const { login } = useAuth();
@@ -105,6 +111,7 @@ const LoginScreen = ({ navigation }: Props) => {
   };
 
   const handleLoginFace = async () => {
+    setLoadingFace(true);
     try {
       // ✅ 1. Pedir permissão da câmera (Android)
       if (Platform.OS === "android") {
@@ -161,6 +168,42 @@ const LoginScreen = ({ navigation }: Props) => {
     } catch (err) {
       console.error("❌ Erro FaceID:", err);
       goToFailure(navigation, "Erro ao verificar FaceID", "Login");
+    } finally {
+      setLoadingFace(false);
+    }
+  };
+
+  const checkHealthApis = async () => {
+    // console.log(API_URL, API_FACE);
+    const apis = [
+      { name: 'Java API', url: API_URL + '/api/v1/health' },
+      { name: 'Python API', url: API_FACE + '/health' },
+    ];
+
+    for (const api of apis) {
+      try {
+        const response = await fetch(api.url);
+        if (response.ok) {
+          Toast.show({
+            type: 'success',
+            text1: `${api.name}`,
+            text2: '✅ Online e respondendo!',
+          });
+        } else {
+          Toast.show({
+            type: 'error',
+            text1: `${api.name}`,
+            text2: `⚠️ Offline (Status ${response.status})`,
+          });
+        }
+      } catch (error) {
+        Toast.show({
+          type: 'error',
+          text1: `${api.name}`,
+          text2: '❌ Falha na conexão',
+        });
+        console.error(`Erro ao conectar em ${api.url}:`, error);
+      }
     }
   };
 
@@ -169,7 +212,15 @@ const LoginScreen = ({ navigation }: Props) => {
     <View style={styles.container}>
       {/* Parte preta com logo */}
       <View style={styles.logoArea}>
-        <Image source={require('../assets/logo.png')} style={styles.logo} resizeMode="contain" />
+        {/* <Image source={require('../assets/logo.png')} style={styles.logo} resizeMode="contain" /> */}
+        <TouchableOpacity onPress={checkHealthApis}>
+          <Image
+            source={require('../assets/logo.png')}
+            style={styles.logo}
+            resizeMode="contain"
+          />
+        </TouchableOpacity>
+
       </View>
 
       {/* Área branca com inputs estilo do input e a linha abaixo dele */}
@@ -206,14 +257,24 @@ const LoginScreen = ({ navigation }: Props) => {
 
         <YellowButton title="Entrar" onPress={handleLogin} loading={loading} />
         <TouchableOpacity
-          style={[styles.button, { marginTop: 15, backgroundColor: '#333' }]}
-          onPress={handleLoginFace}
+          style={[
+            styles.button,
+            { marginTop: 15, backgroundColor: '#333', opacity: loadingFace ? 0.7 : 1 },
+          ]}
+          onPress={!loadingFace ? handleLoginFace : undefined}
+          disabled={loadingFace}
         >
-          <Text style={{ color: '#fff', fontWeight: 'bold' }}>Entrar com FaceID</Text>
+          {loadingFace ? (
+            <ActivityIndicator size="small" color="#FFCD00" />
+          ) : (
+            <Text style={{ color: '#fff', fontWeight: 'bold' }}>Entrar com FaceID</Text>
+          )}
         </TouchableOpacity>
+
 
       </View>
     </View>
+    
   );
 }
 
