@@ -24,7 +24,24 @@ const HomeScreen = () => {
       <View style={styles.content}>
           <ScrollView contentContainerStyle={{ paddingBottom: 20 }}>
             <Text style={styles.msginitial}>Olá {email}, seja bem-vindo(a)!</Text>
-            {/* ...resto do conteúdo... */}
+            <View style={styles.card}>
+            <Text style={styles.cardTitle}>📊 Gráfico de Crescimento</Text>
+            <View style={styles.chartContainer}>
+              <View style={[styles.bar, { height: 40 }]} />
+              <View style={[styles.bar, { height: 70 }]} />
+              <View style={[styles.bar, { height: 100 }]} />
+              <View style={[styles.bar, { height: 60 }]} />
+              <View style={[styles.bar, { height: 90 }]} />
+            </View>
+            <Text style={styles.cardSubtitle}>Simulação de tendência semanal</Text>
+          </View>
+
+          {/* === Card 2 - Taxa Selic Decorativa === */}
+          <View style={styles.card}>
+            <Text style={styles.cardTitle}>💰 Taxa Selic Atual</Text>
+            <Text style={styles.selicValue}>10.75%</Text>
+            <Text style={styles.cardSubtitle}>Atualizado automaticamente</Text>
+          </View>
           </ScrollView>
       </View>
       <BottomNavbar/>
@@ -47,6 +64,47 @@ const styles = StyleSheet.create({
     color: '#4f4f4f',
     fontSize: 16,
     marginBottom: 20,
+  },
+  card: {
+    backgroundColor: '#1E1E1E',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 20,
+    shadowColor: '#000',
+    shadowOpacity: 0.3,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+    elevation: 4,
+  },
+  cardTitle: {
+    color: '#FFD60A',
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  cardSubtitle: {
+    color: '#888',
+    fontSize: 14,
+    marginTop: 8,
+  },
+  chartContainer: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    justifyContent: 'space-between',
+    height: 120,
+    marginTop: 10,
+  },
+  bar: {
+    width: 20,
+    backgroundColor: '#FFD60A',
+    borderRadius: 4,
+  },
+  selicValue: {
+    color: '#00FF88',
+    fontSize: 32,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginTop: 10,
   },
 });
   
